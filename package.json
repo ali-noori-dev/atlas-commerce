@@ -1,0 +1,10 @@
+{
+  "name": "atlas-commerce",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "build:web": "pnpm --filter web build",
+    "start:web": "pnpm --filter web start"
+  }
+}
