@@ -384,36 +384,56 @@ The goal is to validate core business behavior.
 
 # 16. Git Workflow
 
-This repository follows a lightweight workflow appropriate for a solo project.
+This repository uses a lightweight Git workflow designed for a solo-maintained project. The goal is to keep the history clear, readable, and easy to navigate as the codebase grows.
 
 ### Principles
 
-- small focused commits
-- meaningful commit messages
-- clean commit history
+- Prefer small, focused commits.
+- Write clear and descriptive commit messages.
+- Keep the commit history clean and meaningful.
+- Each commit should represent a logical unit of change.
 
-### Commit Prefixes
+### Commit Format
 
-feat – new feature  
-fix – bug fix  
-refactor – internal improvement without behavior change  
-docs – documentation updates  
-chore – tooling or maintenance tasks  
-test – tests added or updated
-
-### Example Commit Messages
+Commit messages follow a simplified **Conventional Commits** style:
 
 ```
-feat: implement product catalog page
-
-fix: correct cart subtotal calculation
-
-refactor: extract shared product types
-
-docs: add architecture overview
-
-chore: configure pnpm workspace
+type(scope): short description
 ```
+
+- **type** — the category of change
+- **scope** — the part of the system affected
+- **description** — concise summary of the change
+
+Example:
+
+```
+feat(api): add health check endpoint
+fix(web): correct cart subtotal calculation
+refactor(shared): extract product types
+docs: update architecture overview
+chore(infra): configure pnpm workspace
+```
+
+### Commit Types
+
+- **feat** — new feature
+- **fix** — bug fix
+- **refactor** — internal code improvement without behavior change
+- **docs** — documentation updates
+- **chore** — tooling, configuration, or maintenance tasks
+- **test** — tests added or updated
+
+### Recommended Scopes
+
+Scopes help identify which part of the monorepo a commit affects.
+
+Common scopes include:
+
+- **web** — Next.js frontend
+- **api** — Fastify backend
+- **shared** — shared packages or utilities
+- **infra** — tooling, configuration, CI/CD, or repository setup
 
 ---
 
