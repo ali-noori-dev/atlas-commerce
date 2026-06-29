@@ -2,210 +2,83 @@
 
 ## 1. Overview
 
-Atlas Commerce is a solo-built ecommerce portfolio project designed to demonstrate frontend engineering, scalable monorepo architecture, and clear domain modeling.
+Atlas Commerce is a TypeScript monorepo ecommerce application designed to demonstrate frontend engineering quality, maintainable architecture, and clear domain modeling.
 
-The project intentionally focuses on code quality, architectural clarity, and shared domain contracts rather than production-level infrastructure complexity. The goal is to showcase realistic ecommerce flows while maintaining a clean, maintainable codebase that is easy to discuss in technical interviews.
+The project focuses on architectural clarity, explicit boundaries between system components, and shared domain contracts across applications.
 
-This repository implements a simplified ecommerce MVP with a dedicated frontend application, backend API, shared domain packages, and a database package within a TypeScript monorepo.
+The system consists of a frontend application, a backend API, and shared packages for domain types and database access. The goal is to model realistic ecommerce flows while keeping the system understandable and extensible.
 
----
-
-# 2. Goals
-
-## Primary Goals
-
-- Demonstrate strong frontend engineering skills
-- Showcase scalable monorepo architecture
-- Share domain types and schemas across applications
-- Model realistic ecommerce entities and flows
-- Maintain clear package boundaries and conventions
-- Keep the codebase understandable and extensible
-
-## Non‑Goals
-
-The following are intentionally excluded to keep the project focused:
-
-- Production payment gateway integration
-- Full admin dashboard
-- Marketplace or multi‑vendor support
-- Distributed infrastructure or complex caching
-- Fulfillment logistics systems
+This document defines the architectural structure, design decisions, and engineering conventions used in the repository.
 
 ---
 
-# 3. Product Scope (MVP)
+# 2. Architectural Principles
 
-## Included Features
+The architecture follows several guiding principles.
 
-- Browse product catalog
-- View product details
-- Add products to cart
-- Update cart quantities
-- Remove cart items
-- Checkout flow
-- Create order with mock payment
-- View customer order history
-- Basic authentication
-- API‑driven product, cart, and order operations
+### Clarity Over Cleverness
 
-## Excluded Features
+The system prioritizes readability and explicit structure over complex abstractions. Code should be easy to understand and maintain.
 
-- Real payment gateways
-- Product reviews and ratings
-- Discount or coupon systems
-- Wishlist functionality
-- Inventory management UI
-- Shipment tracking
-- Recommendation engines
-- Email notifications
+### Explicit Domain Boundaries
 
-These features are intentionally excluded to keep the MVP focused on architecture and frontend quality.
+Each domain has clear responsibilities. Domains should not leak logic into unrelated parts of the system.
 
----
+### Shared Contracts
 
-# 4. User Roles
+Domain types and validation schemas are shared between applications to maintain consistency and reduce duplication.
 
-## Guest
+### Validation at Boundaries
 
-Guests can:
+Input validation occurs at API boundaries to prevent invalid data from entering the system.
 
-- Browse products
-- View product details
-- Add items to cart
-- Modify cart contents
+### Avoid Premature Complexity
 
-Guests cannot:
+Infrastructure complexity is intentionally limited. The architecture focuses on maintainability rather than production-scale optimization.
 
-- Create orders
-- View order history
-- Access protected endpoints
+### Incremental Expansion
 
-## Customer
-
-Authenticated customers can:
-
-- Perform all guest actions
-- Checkout and place orders
-- View order history
-- View order details
-
-## Admin (Future Scope)
-
-Admin capabilities are recognized for future expansion but are not implemented in the MVP.
-
-Possible future capabilities include product management, order management, and inventory control.
+The system is structured so new features can be added without major architectural changes.
 
 ---
 
-# 5. Core User Journeys
+# 3. System Architecture
 
-## Product Discovery
+The system follows a layered architecture distributed across a monorepo:
 
-1. User visits storefront
-2. Browses product catalog
-3. Opens product details
-4. Adds item to cart
-
-## Cart Management
-
-1. User opens cart
-2. Reviews selected items
-3. Updates quantities or removes items
-4. Proceeds to checkout
-
-## Checkout
-
-1. User enters checkout
-2. Provides shipping information
-3. Reviews order summary
-4. Mock payment is processed
-5. Order is created
-6. User sees confirmation
-
-## Order History
-
-1. Customer opens account page
-2. Views list of previous orders
-3. Opens order details
+1.  **Frontend Application (`apps/web`)**: A Next.js application structured with **Feature-Sliced Design (FSD)**.
+2.  **Backend API (`apps/api`)**: A Fastify-based REST API handling business logic and orchestration.
+3.  **Shared Domain Contracts (`packages/shared`)**: Framework-agnostic types and Zod schemas.
+4.  **Database Layer (`packages/database`)**: Drizzle ORM schema and persistence logic.
 
 ---
 
-# 6. Order Lifecycle
+# 4. Frontend Architecture: Feature-Sliced Design (FSD)
 
-Order states:
+To manage complexity and ensure scalability, the `apps/web` application follows the **Feature-Sliced Design (FSD)** methodology. This prevents the "spaghetti code" common in large React projects by enforcing a strict hierarchy.
 
-- pending
-- paid
-- processing
-- shipped
-- delivered
-- cancelled
+### The FSD Layer Hierarchy
 
-MVP flow:
+The frontend is organized into layers. A key rule of FSD is that **a layer can only import from layers below it**:
 
-pending → paid
+| Layer        | Responsibility                                                                    |
+| :----------- | :-------------------------------------------------------------------------------- |
+| **App**      | Global initialization: Providers, global styles, and the main entry point.        |
+| **Pages**    | Composition of widgets and features into full-screen views.                       |
+| **Widgets**  | Large, self-contained UI blocks (e.g., `Header`, `ProductGrid`).                  |
+| **Features** | User actions that provide business value (e.g., `AddToCart`, `SearchProduct`).    |
+| **Entities** | Business domain models and their minimal logic (e.g., `ProductCard`, `CartItem`). |
+| **Shared**   | Low-level, reusable primitives: UI components (Button, Input), hooks, and utils.  |
 
-Additional states exist for realism and future extension.
+### Benefits for Atlas Commerce
 
----
-
-# 7. Payment Lifecycle
-
-Payments are simulated rather than processed through a real provider.
-
-Payment states:
-
-- pending
-- succeeded
-- failed
-
-Orders are only created after successful payment.
+- **Predictable Imports**: No circular dependencies between components.
+- **High Cohesion**: Related logic is grouped into "slices" within layers.
+- **Scalability**: New features can be added by creating new slices without touching existing logic.
 
 ---
 
-# 8. Architecture Principles
-
-The architecture follows several guiding principles:
-
-- Prefer clarity over clever abstractions
-- Keep domain boundaries explicit
-- Share contracts through packages
-- Avoid premature complexity
-- Keep the MVP intentionally small
-- Design for incremental expansion
-
----
-
-# 9. Tech Stack
-
-## Frontend
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-## Backend
-
-- Fastify
-- TypeScript
-
-## Database
-
-- PostgreSQL
-- Drizzle ORM
-
-## Tooling
-
-- pnpm workspaces
-- Prettier
-- Zod validation
-- ESLint
-- TypeScript strict mode
-
----
-
-# 10. Monorepo Structure
+# 5. Monorepo Structure
 
 ```
 apps/
@@ -217,74 +90,185 @@ packages/
   database/
 ```
 
-## apps/web
+### apps/web
 
-Next.js frontend responsible for:
+The web application is built with Next.js.
 
-- UI rendering
-- routing
-- client interactions
-- calling backend APIs
-- consuming shared types
+Responsibilities include:
 
-## apps/api
+- Rendering UI
+- Managing routing
+- Handling user interactions
+- Calling backend APIs
+- Consuming shared types
 
-Fastify backend responsible for:
+The web application does not contain business logic that belongs to backend domains.
 
-- REST endpoints
-- request validation
-- domain orchestration
-- authentication
-- database access
+---
 
-## packages/shared
+### apps/api
 
-Shared domain contracts:
+The API application is built with Fastify.
+
+Responsibilities include:
+
+- Defining REST endpoints
+- Validating requests
+- Coordinating domain logic
+- Handling authentication
+- Accessing the database layer
+
+All server-side business logic resides in the API.
+
+---
+
+### packages/shared
+
+The shared package contains framework‑agnostic domain contracts.
+
+This includes:
 
 - TypeScript types
-- Zod schemas
-- constants
-- framework‑agnostic utilities
+- Zod validation schemas
+- Domain constants
+- Shared utilities
 
-## packages/database
-
-Database package containing:
-
-- Drizzle schema
-- database client
-- migrations configuration
+The shared package must remain independent of specific frameworks.
 
 ---
 
-# 11. Domain Boundaries
+### packages/database
 
-## Product Domain
+The database package contains persistence infrastructure.
 
-Handles product catalog and product details.
+It includes:
 
-## Cart Domain
+- Drizzle schema definitions
+- Database client configuration
+- Migration setup
 
-Handles cart items, quantity updates, and subtotal calculations.
-
-## Order Domain
-
-Responsible for order creation, order items snapshot, and order history.
-
-## Auth Domain
-
-Responsible for user identity and protected access.
-
-## Database Domain
-
-Handles persistence concerns and schema definitions.
+This package isolates database concerns from application logic.
 
 ---
 
-# 12. API Design
+# 6. Domain Boundaries
 
-The API follows pragmatic REST conventions.
+The system is organized around several domains.
 
-Example endpoints:
+### Product Domain
+
+Responsible for:
+
+- Product catalog
+- Product details
+- Product listing queries
+
+---
+
+### Cart Domain
+
+Responsible for:
+
+- Cart item management
+- Quantity updates
+- Cart subtotal calculations
+
+---
+
+### Order Domain
+
+Responsible for:
+
+- Order creation
+- Order item snapshots
+- Order history retrieval
+
+---
+
+### Auth Domain
+
+Responsible for:
+
+- User identity
+- Authentication
+- Protected access control
+
+---
+
+### Database Domain
+
+Responsible for:
+
+- Persistence
+- Schema definitions
+- Data storage concerns
+
+Each domain owns its logic and data responsibilities.
+
+---
+
+# 7. Core Domain Model
+
+The primary entities in the system include:
+
+User  
+Product  
+Cart  
+CartItem  
+Order  
+OrderItem  
+Payment
+
+These entities represent the core ecommerce data model used across applications.
+
+Shared domain contracts are defined in `packages/shared`.
+
+---
+
+# 8. Order Lifecycle
+
+Orders move through several states.
+
+Supported states include:
+
+pending  
+paid  
+processing  
+shipped  
+delivered  
+cancelled
+
+The MVP currently implements a simplified flow.
+
+```
+pending → paid
+```
+
+Additional states exist to allow future expansion without schema redesign.
+
+---
+
+# 9. Payment Lifecycle
+
+Payments are simulated rather than processed through an external provider.
+
+Payment states include:
+
+pending  
+succeeded  
+failed
+
+Orders are created only after successful payment.
+
+This approach allows the checkout flow to be implemented without integrating a real payment provider.
+
+---
+
+# 10. API Design
+
+The backend exposes REST-style endpoints.
+
+Example endpoints include:
 
 ```
 GET /products
@@ -298,18 +282,20 @@ GET /orders
 GET /orders/:id
 ```
 
-Guidelines:
+Design conventions include:
 
-- Use nouns for resources
-- Use HTTP verbs for actions
-- Validate requests at the API boundary
-- Return predictable JSON structures
+- Resources are represented as nouns
+- HTTP verbs define actions
+- Validation occurs at request boundaries
+- Responses follow a predictable JSON structure
 
 ---
 
-# 13. API Response Format
+# 11. API Response Format
 
-Success response:
+All API responses follow a consistent structure.
+
+### Success Response
 
 ```
 {
@@ -318,7 +304,7 @@ Success response:
 }
 ```
 
-Error response:
+### Error Response
 
 ```
 {
@@ -332,108 +318,88 @@ Error response:
 
 Common error codes include:
 
-- VALIDATION_ERROR
-- UNAUTHORIZED
-- FORBIDDEN
-- NOT_FOUND
-- CONFLICT
-- INTERNAL_SERVER_ERROR
+VALIDATION_ERROR  
+UNAUTHORIZED  
+FORBIDDEN  
+NOT_FOUND  
+CONFLICT  
+INTERNAL_SERVER_ERROR
 
 ---
 
-# 14. Shared Types and Schemas
+# 12. Data Ownership
 
-Shared contracts live in `packages/shared`.
+Responsibilities are separated across layers.
 
-Examples:
+shared → domain contracts  
+database → persistence logic  
+api → server logic and validation  
+web → UI and interaction
 
-- Product
-- Cart
-- CartItem
-- Order
-- User
-
-Zod schemas are used for request validation and domain rules.
-
-The shared package must remain framework‑agnostic.
+Applications should not duplicate domain contracts owned by the shared package.
 
 ---
 
-# 15. Data Ownership
+# 13. Environment Configuration
 
-Responsibilities are clearly separated:
-
-- shared → domain contracts
-- database → persistence layer
-- api → server logic and validation
-- web → UI and user interaction
-
-No application should duplicate domain contracts owned by shared.
-
----
-
-# 16. Environment Variables
-
-Sensitive configuration belongs to the API application.
+Sensitive configuration belongs exclusively to the API application.
 
 Examples include:
 
 - database connection string
 - authentication secrets
 
-Frontend variables should only contain safe public values.
+Frontend applications only use safe public environment variables.
 
 ---
 
-# 17. Error Handling
+# 14. Error Handling Strategy
 
-Errors follow a consistent structure.
+Errors are handled consistently across the API.
 
-Guidelines:
+Guidelines include:
 
 - validate input early
 - return structured error responses
-- avoid exposing internal details
+- avoid exposing internal implementation details
 - map domain failures to stable error codes
+- log internal failures on the server
 
 ---
 
-# 18. Testing Strategy
+# 15. Testing Strategy
 
-Testing focuses on critical logic rather than exhaustive coverage.
+Testing focuses on critical logic rather than broad coverage.
 
-Priority areas:
+Priority areas include:
 
-1. shared domain utilities
+1. Shared utilities and validation schemas
 2. API endpoint behavior
-3. core frontend flows
+3. Checkout and order creation flow
+4. Critical frontend interactions
 
-The goal is to validate business logic and important user journeys.
+The goal is to validate core business behavior.
 
 ---
 
-## 19. Git Workflow
+# 16. Git Workflow
 
-This is a solo project with a lightweight workflow.
+This repository follows a lightweight workflow appropriate for a solo project.
 
 ### Principles
 
 - small focused commits
 - meaningful commit messages
-- maintain a clean and readable history
+- clean commit history
 
-### Commit Convention
+### Commit Prefixes
 
-Commit messages follow a simplified conventional format.
-
-Prefixes used in this repository:
-
-- `feat` – new feature
-- `fix` – bug fix
-- `refactor` – internal improvement without behavior change
-- `docs` – documentation updates
-- `chore` – tooling or maintenance tasks
-- `test` – tests added or updated
+feat – new feature  
+fix – bug fix  
+refactor – internal improvement without behavior change  
+docs – documentation updates  
+chore – tooling or maintenance tasks  
+test – tests added or updated
 
 ### Example Commit Messages
 
@@ -451,33 +417,30 @@ chore: configure pnpm workspace
 
 ---
 
-# 20. Future Expansion
+# 17. Definition of Done
 
-The architecture supports future features such as:
+A feature is considered complete when:
 
-- admin dashboard
-- inventory management
-- payment provider integration
-- discount system
-- reviews
-- search improvements
-
----
-
-# 21. Definition of Done
-
-A feature is complete when:
-
-- implementation works
-- types and validation are correct
-- lint and type checks pass
-- important logic has tests
+- the implementation works
+- types are correct
+- validation exists
+- lint checks pass
+- type checking passes
+- critical logic has tests
 - documentation remains accurate
 
 ---
 
-# 22. Architecture Baseline
+# 18. Future Expansion
 
-Atlas Commerce is a TypeScript monorepo containing a Next.js frontend, Fastify API, shared domain packages, and a database layer.
+The architecture supports future capabilities such as:
 
-The architecture baseline is established once product scope, domain boundaries, API conventions, and engineering standards are documented.
+- admin dashboard
+- inventory management
+- payment provider integration
+- discount and coupon systems
+- product reviews
+- improved search capabilities
+- CI/CD automation
+
+These features are intentionally excluded from the MVP but the architecture allows them to be added without major structural changes.
