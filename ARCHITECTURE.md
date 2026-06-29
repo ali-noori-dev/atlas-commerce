@@ -417,7 +417,32 @@ chore: configure pnpm workspace
 
 ---
 
-# 17. Definition of Done
+# 17. Coding Standards & Conventions
+
+To maintain high code quality and consistency across the monorepo, the following conventions are enforced.
+
+### 17.1 File & Folder Naming
+
+- **Folders**: `kebab-case` (e.g., `user-profile/`)
+- **React Components**: `PascalCase` (e.g., `ProductCard.tsx`)
+- **Hooks**: `camelCase` with `use` prefix (e.g., `useCart.ts`)
+- **Utilities/Logic**: `camelCase` (e.g., `formatCurrency.ts`)
+
+### 17.2 Code Naming
+
+- **Variables & Functions**: `camelCase` (e.g., `isAvailable`, `fetchData()`)
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `API_RETRY_LIMIT`)
+- **Types & Interfaces**: `PascalCase` (e.g., `UserType`, `OrderRequest`)
+
+### 17.3 Database Naming (SQL & Drizzle)
+
+- **Tables**: `snake_case` (plural) (e.g., `users`, `order_items`)
+- **Columns**: `snake_case` (e.g., `created_at`, `user_id`)
+- **Mapping**: In TypeScript/Drizzle, columns are mapped to `camelCase` (e.g., `createdAt: timestamp('created_at')`).
+
+---
+
+# 18. Definition of Done
 
 A feature is considered complete when:
 
@@ -431,7 +456,7 @@ A feature is considered complete when:
 
 ---
 
-# 18. Future Expansion
+# 19. Future Expansion
 
 The architecture supports future capabilities such as:
 
