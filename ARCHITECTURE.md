@@ -49,7 +49,7 @@ The system follows a layered architecture distributed across a monorepo:
 1.  **Frontend Application (`apps/web`)**: A Next.js application structured with **Feature-Sliced Design (FSD)**.
 2.  **Backend API (`apps/api`)**: A Fastify-based REST API handling business logic and orchestration.
 3.  **Shared Domain Contracts (`packages/shared`)**: Framework-agnostic types and Zod schemas.
-4.  **Database Layer (`packages/database`)**: Drizzle ORM schema and persistence logic.
+4.  **Database Layer (`packages/database`)**: Prisma schema and persistence logic.
 
 ---
 
@@ -143,7 +143,7 @@ The database package contains persistence infrastructure.
 
 It includes:
 
-- Drizzle schema definitions
+- Prisma schema definitions
 - Database client configuration
 - Migration setup
 
@@ -454,11 +454,11 @@ To maintain high code quality and consistency across the monorepo, the following
 - **Constants**: `UPPER_SNAKE_CASE` (e.g., `API_RETRY_LIMIT`)
 - **Types & Interfaces**: `PascalCase` (e.g., `UserType`, `OrderRequest`)
 
-### 17.3 Database Naming (SQL & Drizzle)
+### 17.3 Database Naming (SQL & Prisma)
 
 - **Tables**: `snake_case` (plural) (e.g., `users`, `order_items`)
 - **Columns**: `snake_case` (e.g., `created_at`, `user_id`)
-- **Mapping**: In TypeScript/Drizzle, columns are mapped to `camelCase` (e.g., `createdAt: timestamp('created_at')`).
+- **Mapping**: In TypeScript/Prisma, columns are mapped to `camelCase` (e.g., `createdAt: timestamp('created_at')`).
 
 ---
 

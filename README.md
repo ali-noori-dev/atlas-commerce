@@ -60,7 +60,7 @@ apps/
 
 packages/
   shared/     # Shared domain types & validation schemas
-  database/   # Drizzle schema & database client
+  database/   # Prisma schema & database client
 ```
 
 ---
@@ -82,7 +82,7 @@ packages/
 ### Database
 
 - PostgreSQL
-- Drizzle ORM
+- Prisma
 
 ### Tooling
 
