@@ -4,9 +4,17 @@
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "build:web": "pnpm --filter web build",
-    "start:web": "pnpm --filter web start"
+    "start:web": "pnpm --filter web start",
+    "lint": "pnpm --filter \"*\" exec eslint .",
+    "lint:fix": "pnpm --filter \"*\" exec eslint . --fix",
+    "format": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\" --ignore-path .gitignore",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\" --ignore-path .gitignore",
+    "typecheck": "pnpm --filter \"*\" exec tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^9.7.0",
+    "prettier": "^3.9.4",
     "typescript": "^6.0.3"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@atlas/shared",
+  "name": "@atlas/config",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,5 +12,8 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
   }
 }

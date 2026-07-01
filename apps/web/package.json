@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@atlas/shared": "workspace:*",
@@ -15,10 +16,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.2",
-    "@types/node": "^26.0.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "eslint": "^10.6.0",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4.3.2"
   }

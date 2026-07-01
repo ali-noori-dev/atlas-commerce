@@ -1,1 +1,1 @@
-export const projectName = "Atlas Commerce";
+export const projectName = 'Atlas Commerce'
