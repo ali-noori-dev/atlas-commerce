@@ -462,7 +462,30 @@ To maintain high code quality and consistency across the monorepo, the following
 
 ---
 
-# 18. Definition of Done
+# 18. Dependency Management
+
+The repository enforces a strict separation between runtime and tooling dependencies to prevent version drift.
+
+### Runtime Dependencies
+
+- Installed locally within the specific package or app that imports them.
+- Keeps packages self-contained and prevents hidden dependencies.
+- Examples: `zod` in `packages/config`, `@prisma/client` in `packages/database`.
+
+### Tooling Dependencies
+
+- Installed globally at the **workspace root**.
+- Ensures consistent linting, formatting, and compilation rules across the codebase.
+- Examples: `eslint`, `typescript`, `prettier`.
+
+### Framework-Specific Tooling
+
+- Stays inside the individual application.
+- Example: `eslint-config-next` inside `apps/web`.
+
+---
+
+# 19. Definition of Done
 
 A feature is considered complete when:
 
@@ -476,7 +499,7 @@ A feature is considered complete when:
 
 ---
 
-# 19. Future Expansion
+# 20. Future Expansion
 
 The architecture supports future capabilities such as:
 
